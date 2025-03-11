@@ -1,0 +1,104 @@
+# DBT Practice Project
+
+## Objective
+The goal is to transform raw data into a curated format using Snowflake and dbt, applying a systematic process that includes data ingestion, transformation, and analytics. You will learn to structure data pipelines effectively and implement advanced dbt concepts.
+
+Sample Data Set
+sf-data folder
+
+Step-by-Step Instructions
+
+## ✅ Step 1: Dataset Preparation and Upload (Snowflake)
+
+1. Understand the Dataset: Familiarize yourself with the provided datasets, which include tables for Customers, Products, Sales, and more.
+2. Prepare CSV Files: Ensure all data files are correctly formatted as CSVs.
+3. Upload to Snowflake: Create an internal stage in Snowflake and upload each CSV file to this stage. The goal is to have all raw data accessible within Snowflake for further processing.
+
+Outcome: All raw data files are successfully uploaded to Snowflake internal stage, ready for initial processing.
+
+Step 2: Landing Zone (Snowflake)
+
+1. Create Landing Tables: Set up tables in Snowflake to hold the raw data from the CSV files.
+2. Load Data: Populate the landing tables with data from the uploaded files using Snowflake Copy Into statements along with two additional columns – Filename, Fileloadtime, ensuring each table accurately reflects the structure of its corresponding CSV file.
+up
+Outcome: Data is loaded into Snowflake tables along with two additional columns – Filename, Fileloadtime without any transformations, serving as a raw data repository for further processing.
+For example – Column structure of Customer table
+
+
+
+
+
+
+Step 3: Acquisition Layer (DBT)
+
+1. Initial Data Processing: Clean and validate the raw data, removing any obvious errors or nulls that may affect downstream transformations such as remove rows having null/duplicate values in key columns
+2. Standardize Formats: Ensure data consistency, such as standardizing date formats (YYYY-MM-DD) using a Macro.
+
+Outcome: Data is cleaned and standardized, making it more consistent and reliable for further transformations.
+For example – Rows such as below should be removed
+
+
+
+Date format should be updated to YYYY-MM-DD
+
+
+
+Step 4: Cleanse Layer (DBT)
+
+1. Data Enrichment: Join or enhance datasets with additional information where necessary, such as linking to reference data using dbt seeds (e.g. Territory).
+2. Implement Slowly Changing Dimensions (SCD): For datasets that require historical tracking, implement SCD Type 2 to maintain historical accuracy.
+
+Outcome: Data is enriched, and historical changes are tracked, ensuring a comprehensive and accurate dataset for analysis.
+
+For example – Sales and Returns data should be enriched with Territory related columns
+
+
+For SCD Type-2 – below columns should be present-
+
+
+dbt_scd_id: A unique identifier for each version of a record.
+dbt_valid_from / dbt_valid_to: Timestamps indicating the validity period of each record version.
+dbt_scd_is_current: A boolean flag indicating whether the record is the most recent version.
+
+Step 5: Curate Layer (DBT)
+
+1. Create Dimension Tables: Develop final dimension tables that provide descriptive attributes related to key business entities (e.g., Customers, Products).
+2. Create Fact Tables: Develop final fact tables that capture the quantitative data for analysis (e.g., Sales, Returns).
+
+Outcome: Data is organized into a star schema format, with dimension and fact tables ready for analytical querying.
+For example – Combine the Product, Product Subcategories and Product Categories to create Product Dimension Table
+
+
+Step 6: Analytics Models (DBT)
+
+1. Develop Analytical Models: Create models to answer key business questions, such as customer purchase behavior or product performance.
+2. Generate Insights: Use the curated data to derive insights and trends that can guide business decisions.
+
+Outcome: Create the below mentioned models
+Sales by Region, Country and Continent for each year with Y-o-Y Comparison with PY Sales
+Customers who ordered same product more than once along with no of orders for different product but under same subcategory
+Most returned products under each territory
+Revenue (Based on ProductCost and ProductPrice) by product subcategory and category for each year with Y-o-Y Comparison with PY Revenue
+
+
+
+
+
+
+
+Step 7: dbt Tests (DBT)
+
+1. Implement Data Quality Tests: Set up tests within dbt to ensure data quality and integrity. These can include uniqueness tests on primary keys, not-null tests on essential columns, and referential integrity tests to ensure that relationships between tables are maintained.
+2. Run and Monitor Tests: Execute the tests using dbt commands and monitor the results to identify any data issues. Address any failures by investigating the root cause and updating data transformations or source data as necessary.
+
+Outcome: Regularly running dbt tests ensures that data quality is maintained throughout the pipeline, providing confidence in the accuracy and reliability of the data used for analysis.
+
+Advanced dbt Concepts
+
+- Macros: Implement reusable SQL snippets to apply consistent transformations across models like standardizing date formats.
+- Seeds: Use static data that doesn’t change often (e.g., reference tables like Territory) to enrich datasets.
+- Snapshots: Maintain historical data changes over time, particularly useful for SCD implementations.
+
+ Conclusion
+
+By the end of this project, you should have a comprehensive understanding of setting up a data pipeline with Snowflake and dbt, from raw data ingestion to final analytics. You will gain practical experience in data modeling, cleansing, and transformation, applying industry best practices throughout the process.
