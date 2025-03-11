@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # List of tables and their column definitions
 TABLES = {
     'CUSTOMERS': """

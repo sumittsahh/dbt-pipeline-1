@@ -1,6 +1,9 @@
 import snowflake.connector
-from util import SNOWFLAKE_CONFIG
-from uploadFiles import uploadCSV
+from util.util import SNOWFLAKE_CONFIG
+from scripts.upload import uploadCSV
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def connect_to_snowflake():
@@ -13,7 +16,7 @@ def connect_to_snowflake():
         print(f"❌ Error connecting to Snowflake: {str(e)}")
         return None
 
-def main():
+def main(upload=False,):
     
     # Connect to Snowflake
     conn = connect_to_snowflake()
@@ -24,54 +27,19 @@ def main():
 
     '''
     Step 1: Dataset Preparation and Upload (Snowflake)
-
-    1. Understand the Dataset: Familiarize yourself with the provided datasets, which include tables for Customers, Products, Sales, and more.
-    2. Prepare CSV Files: Ensure all data files are correctly formatted as CSVs.
-    3. Upload to Snowflake: Create an internal stage in Snowflake and upload each CSV file to this stage. The goal is to have all raw data accessible within Snowflake for further processing.
-
-    Outcome: All raw data files are successfully uploaded to Snowflake internal stage, ready for initial processing.
     '''
-
-
-    
-    # Internal stage name - adjust as needed
-    stage_name = 'my_stage'
-    warehouse = 'my_warehouse'
-    warehouseSize = 'x-small'
-    database= 'my_db'
-    role= 'my_role'
-    schema= 'my_schema'
-
-    uploadCSV(
-        cursor,
-        stage_name,
-        "dbt-practice-project/sf/sf-dbt-data/",
-        warehouse,
-        warehouseSize,
-        database,
-        role,
-        schema
-    )
-    
-    
-    
-    # try:
-    #     # Create and load each table
-    #     for table_name, columns in TABLES.items():
-    #         # Create landing table
-    #         full_table_name = f"{SNOWFLAKE_CONFIG['schema']}.{table_name}"
-    #         create_landing_table(conn, full_table_name, columns)
-            
-    #         # Load data from stage
-    #         load_data_from_stage(conn, full_table_name, stage_name)
-            
-    #     print("Data loading process completed successfully")
-        
-    # except Exception as e:
-    #     print(f"Error in main process: {str(e)}")
-    # finally:
-    #     conn.close()
-    #     print("Snowflake connection closed")
+    if upload:
+        uploadCSV(
+            cursor,
+            os.getenv('stage_name'),
+            os.getenv('sf-dbt-data'),
+            os.getenv('warehouse'),
+            os.getenv('warehouseSize'),
+            os.getenv('database'),
+            os.getenv('schema')
+        )
 
 if __name__ == "__main__":
-    main()
+    main(
+        upload=True,
+    )
