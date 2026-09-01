@@ -1,4 +1,4 @@
-# DBT Practice Project
+# DBT Project
 
 ## Objective
 The goal is to transform raw data into a curated format using Snowflake and dbt, applying a systematic process that includes data ingestion, transformation, and analytics. You will learn to structure data pipelines effectively and implement advanced dbt concepts.
